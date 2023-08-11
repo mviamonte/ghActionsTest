@@ -1,0 +1,27 @@
+# A workflow to alow formate Terraform code
+
+name: TerraformTest
+
+# When this workflow runs
+on:
+  # Triggers the workflow based on the following events
+  pull_request:
+    branches: [ "main" ]
+    
+  # Run the workflow manually
+  workflow_dispatch:
+  
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    #Every line under steps is either a command or an action
+    steps:
+      # Checking out the code repo
+      - uses: actions/checkout@v3
+      
+      # Executing a step to follow up the workflow
+      - name: Checkout status
+        run: echo Checkout is done
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.1.7
