@@ -10,6 +10,12 @@ on:
     
   # Run the workflow manually
   workflow_dispatch:
+#Env variables. I have created a new Project (CI/CD) and a new workspace
+env:
+  TF_CLOUD_ORGANIZATION: "cloud-bizarre"
+  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+  TF_WORKSPACE: "gha-test"
+  CONFIG_DIRECTORY: "./"
   
 jobs:
   checkout:
@@ -22,6 +28,26 @@ jobs:
       # Executing a step to follow up the workflow
       - name: Checkout status
         run: echo Checkout is done
+
+  #Testing the Terraform action
+  terraform_check_code:
+    runs-on: ubuntu-latest
+    steps:
+      #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.1.7
+      #Set the credentials
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+     #Execute the terraform init command
+      - uses: hashicorp/setup-terraform@v2
+      - run: terraform init
+
+      - id: plan
+        run: terraform plan -no-color
+
+      - run: echo ${{ steps.plan.outputs.stdout }}
+      - run: echo ${{ steps.plan.outputs.stderr }}
+      - run: echo ${{ steps.plan.outputs.exitcode }}
