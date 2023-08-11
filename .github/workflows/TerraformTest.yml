@@ -18,9 +18,9 @@ env:
   CONFIG_DIRECTORY: "./"
   
 jobs:
-  checkout:
+  #Testing the Terraform action
+  terraform_check_code:
     runs-on: ubuntu-latest
-    #Every line under steps is either a command or an action
     steps:
       # Checking out the code repo
       - uses: actions/checkout@v3
@@ -28,11 +28,7 @@ jobs:
       # Executing a step to follow up the workflow
       - name: Checkout status
         run: echo Checkout is done
-
-  #Testing the Terraform action
-  terraform_check_code:
-    runs-on: ubuntu-latest
-    steps:
+        
       #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
         with:
