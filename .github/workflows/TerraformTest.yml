@@ -37,14 +37,18 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-     #Execute the terraform init command
+      #Install wrapper script
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: true
+          
+     #Execute the terraform init command and generate some outputs
       - uses: hashicorp/setup-terraform@v2
       - run: terraform init
 
       - id: plan
         run: terraform plan -no-color
 
-      - id: outputs
-        run: echo ${{ steps.plan.outputs.stdout }}
-        #run: echo ${{ steps.plan.outputs.stderr }}
-        #run: echo ${{ steps.plan.outputs.exitcode }}
+      - run: echo ${{ steps.plan.outputs.stdout }}
+      - run: echo ${{ steps.plan.outputs.stderr }}
+      - run: echo ${{ steps.plan.outputs.exitcode }}
