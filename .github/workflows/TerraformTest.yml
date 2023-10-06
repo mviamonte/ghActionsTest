@@ -21,8 +21,7 @@ jobs:
   #Testing the Terraform action
   terraform_check_code:
     runs-on: ubuntu-latest
-    permissions:
-        pull-requests: write
+    permissions: {}
     steps:
       # Checking out the code repo
       - uses: actions/checkout@v3
