@@ -2,6 +2,7 @@
 
 name: TerraformPlan
 
+run-name: Github action for planning for AWS Resources
 # When this workflow runs
 on:
   # Triggers the workflow based on the following events
