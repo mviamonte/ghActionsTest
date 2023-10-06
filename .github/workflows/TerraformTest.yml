@@ -65,8 +65,7 @@ jobs:
       - name : Outputs from terraform commands
         run: |
           echo ${{ steps.plan.outputs.stdout }}
-          echo ${{ steps.plan.outputs.stderr }}
-          echo ${{ steps.plan.outputs.exitcode }}
+
       #Comments the PR with the output of terraform plan
       - uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
