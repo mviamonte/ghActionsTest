@@ -16,6 +16,12 @@ env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "gha-test"
   CONFIG_DIRECTORY: "./"
+#Defaults values (to be confirmed)
+defaults:
+  run:
+    working-directory: ${{ env.tf_actions_working_dir }}
+permissions:
+  pull-requests: write
   
 jobs:
   #Testing the Terraform action
