@@ -1,6 +1,6 @@
 # A workflow to alow formate Terraform code
 
-name: TerraformTest
+name: TerraformPlan
 
 # When this workflow runs
 on:
