@@ -16,13 +16,13 @@ env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "gha-test"
   CONFIG_DIRECTORY: "./"
-permissions:
-  pull-requests: write
   
 jobs:
   #Testing the Terraform action
   terraform_check_code:
     runs-on: ubuntu-latest
+    permissions:
+        pull-requests: write
     steps:
       # Checking out the code repo
       - uses: actions/checkout@v3
