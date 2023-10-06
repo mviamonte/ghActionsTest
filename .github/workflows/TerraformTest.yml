@@ -61,10 +61,6 @@ jobs:
         id: plan
         run: terraform plan -no-color
         continue-on-error: true
-      # Run outputs from Terraform plan
-      - name : Outputs from terraform commands
-        run: |
-          echo ${{ steps.plan.outputs.stdout }}
 
       #Comments the PR with the output of terraform plan
       - uses: actions/github-script@v6
