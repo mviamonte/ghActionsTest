@@ -35,7 +35,7 @@ jobs:
         id: first_apply
         uses: dflook/terraform-apply@v1
         with: 
-            workspace: ${{TF_WORKSPACE}} 
+          workspace: ${{env.TF_WORKSPACE}} 
       
       - name: Retry failed apply
         uses: dflook/terraform-apply@v1
@@ -43,5 +43,5 @@ jobs:
         with:
           path: terraform
           auto_approve: true
-          workspace: ${{TF_WORKSPACE}} 
+          workspace: ${{env.TF_WORKSPACE}} 
         
