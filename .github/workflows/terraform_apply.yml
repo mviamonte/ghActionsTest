@@ -1,1 +1,47 @@
+name: TerraformApply
 
+run-name: Github action for Apply for AWS Dummy Resources
+# When this workflow runs
+on:
+  # Triggers the workflow when merge code to main
+  push:
+    branches: [ "main" ]
+    
+  # Run the workflow manually
+  workflow_dispatch:
+#Env variables. I have created a new Project (CI/CD) and a new workspace
+env:
+  TF_CLOUD_ORGANIZATION: "cloud-bizarre"
+  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+  TF_WORKSPACE: "gha-test"
+  CONFIG_DIRECTORY: "./"
+  
+jobs:
+  #Testing the Terraform action
+  terraform-apply:
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    permissions: write-all
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@v3
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/merge
+
+      - name: Terraform apply
+        id: first_apply
+        uses: dflook/terraform-apply@v1
+        with: 
+            workspace: ${{TF_WORKSPACE}} 
+      
+      - name: Retry failed apply
+        uses: dflook/terraform-apply@v1
+        if: ${{ steps.first_apply.outputs.failure-reason == 'apply-failed' }}
+        with:
+          path: terraform
+          auto_approve: true
+          workspace: ${{TF_WORKSPACE}} 
+        
