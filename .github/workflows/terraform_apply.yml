@@ -4,7 +4,7 @@ run-name: Github action for Apply for AWS Dummy Resources
 # When this workflow runs
 on:
   # Triggers the workflow when merge code to main
-  push:
+  pull_request:
     branches: [ "main" ]
     
   # Run the workflow manually
@@ -27,8 +27,6 @@ jobs:
       - name: Checkout code
         id: checkout
         uses: actions/checkout@v3
-        with:
-          ref: refs/pull/${{ github.event.issue.number }}merge
             
       - name: Terraform Init
         id: init
