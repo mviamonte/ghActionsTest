@@ -19,7 +19,6 @@ env:
 jobs:
   #Testing the Terraform action
   terraform-apply:
-    if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     permissions: write-all
     env:
