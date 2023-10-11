@@ -23,6 +23,7 @@ jobs:
     permissions: write-all
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TERRAFORM_CLOUD_TOKENS: app.terraform.io=${{ secrets.TF_API_TOKEN }}
     steps:
       - name: Checkout code
         id: checkout
@@ -49,8 +50,7 @@ jobs:
         uses: dflook/terraform-apply@v1
         with: 
           workspace: ${{env.TF_WORKSPACE}}
-          backend_config: token=${{ secrets.TF_API_TOKEN }}
-
+          
       - name: Retry failed apply
         id: retry_if_fails
         uses: dflook/terraform-apply@v1
@@ -58,15 +58,11 @@ jobs:
         with:
           auto_approve: true
           workspace: ${{env.TF_WORKSPACE}}
-          backend_config: token=${{ secrets.TF_API_TOKEN }}
-      
+                
       - name: Destroy resources if deployment fails
         id: destroy_if_fails
         uses: dflook/terraform-destroy@v1
         if: ${{ steps.retry_if_fails.outputs.failure-reason == 'apply-failed' }}
         with:
           workspace: ${{env.TF_WORKSPACE}}
-          backend_config: token=${{ secrets.TF_API_TOKEN }}
-      
-
-        
+          
