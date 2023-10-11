@@ -49,6 +49,7 @@ jobs:
         uses: dflook/terraform-apply@v1
         with: 
           workspace: ${{env.TF_WORKSPACE}}
+          backend_config: token=${{ secrets.TF_API_TOKEN }}
 
       - name: Retry failed apply
         id: retry_if_fails
@@ -57,6 +58,7 @@ jobs:
         with:
           auto_approve: true
           workspace: ${{env.TF_WORKSPACE}}
+          backend_config: token=${{ secrets.TF_API_TOKEN }}
       
       - name: Destroy resources if deployment fails
         id: destroy_if_fails
@@ -64,6 +66,7 @@ jobs:
         if: ${{ steps.retry_if_fails.outputs.failure-reason == 'apply-failed' }}
         with:
           workspace: ${{env.TF_WORKSPACE}}
+          backend_config: token=${{ secrets.TF_API_TOKEN }}
       
 
         
