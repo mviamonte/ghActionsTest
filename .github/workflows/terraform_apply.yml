@@ -45,23 +45,20 @@ jobs:
         with: 
           workspace: ${{env.TF_WORKSPACE}}
 
-      - name: Destroy resources if deployment fails
-        needs: first_apply
-        id: destroy_if_fails
-        uses: dflook/terraform-destroy@v1
-        if: ${{ steps.first_apply.outputs.failure-reason == 'apply-failed' }}
-        with:
-          workspace: ${{env.TF_WORKSPACE}}
-      
       - name: Retry failed apply
-        needs: destroy_if_fails
         id: retry_if_fails
         uses: dflook/terraform-apply@v1
         if: ${{ steps.first_apply.outputs.failure-reason == 'apply-failed' }}
         with:
-          path: terraform
           auto_approve: true
-          workspace: ${{env.TF_WORKSPACE}} 
+          workspace: ${{env.TF_WORKSPACE}}
+      
+      - name: Destroy resources if deployment fails
+        id: destroy_if_fails
+        uses: dflook/terraform-destroy@v1
+        if: ${{ steps.retry_if_fails.outputs.failure-reason == 'apply-failed' }}
+        with:
+          workspace: ${{env.TF_WORKSPACE}}
       
 
         
