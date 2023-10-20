@@ -21,7 +21,7 @@ env:
   
 jobs:
   #Testing the Terraform action
-  terraform_check_code:
+  terraform_steps:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
