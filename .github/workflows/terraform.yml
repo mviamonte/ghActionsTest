@@ -6,6 +6,9 @@ run-name: Github action for planning for AWS Resources
 # When this workflow runs
 on:
   # Triggers the workflow based on the following events
+  push:
+    branches:
+      - main
   pull_request:
     paths:
       - '**/*.tf'  # Trigger only when Terraform files change  
