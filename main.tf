@@ -22,3 +22,5 @@ provider "aws" {
 resource "random_pet" "sg" {}
 
 resource "random_pet" "pb" {}
+
+resource "random_pet" "gt" {}
