@@ -1,4 +1,4 @@
-# A workflow to alow formate Terraform code
+# A workflow to allow terraform actions (init, plan, validate and merge based on PR closed event)
 
 name: TerraformPlan
 
@@ -7,7 +7,8 @@ run-name: Github action for planning for AWS Resources
 on:
   # Triggers the workflow based on the following events
   pull_request:
-    branches: [ "main" ]
+    paths:
+      - '**/*.tf'  # Trigger only when Terraform files change  
     
   # Run the workflow manually
   workflow_dispatch:
@@ -46,23 +47,31 @@ jobs:
           
      #Execute the terraform init command and generate some outputs
       - uses: hashicorp/setup-terraform@v2
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -check
-        continue-on-error: true
-
       - name: Terraform Init
         id: init
         run: terraform init
 
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -input=false -out=tfplan
+        continue-on-error: true
+      
+      - name: Review Terraform Plan
+        id: save_plan
+        if: success() && github.event_name == 'pull_request'
+        run: terraform show -json tfplan > tfplan.json
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check -recursive
+      
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color
-        continue-on-error: true
+      
 
       #Comments the PR with the output of terraform plan
       - uses: actions/github-script@v6
@@ -101,4 +110,8 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
+      - name: Apply Terraform Changes
+        #if: success() && github.event_name == 'pull_request' && github.event.action == 'closed'  # Only apply changes when the PR is merged
+        if: steps.validate.outputs.step_success == 'true' && github.event_name == 'pull_request' && github.event.action == 'closed'  # Only apply changes when the PR is merged and validate has been success
+        run: terraform apply -input=false tfplan
 
