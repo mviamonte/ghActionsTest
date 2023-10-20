@@ -22,8 +22,3 @@ provider "aws" {
 resource "random_pet" "sg" {}
 
 resource "random_pet" "pb" {}
-
-#Triggering the new workflow
-resource "random_pet" "ba" {}
-
-resource "random_pet" "ab" {}

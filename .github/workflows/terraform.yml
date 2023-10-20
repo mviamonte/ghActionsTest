@@ -71,6 +71,9 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
+        if: ${{ success() }}
+        env:
+            step_success: true
       
 
       #Comments the PR with the output of terraform plan
