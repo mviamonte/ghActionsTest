@@ -111,6 +111,7 @@ jobs:
               body: output
             })
       - name: Apply Terraform Changes
+        id: apply_the_plan
         #if: success() && github.event_name == 'pull_request' && github.event.action == 'closed'  # Only apply changes when the PR is merged
         if: steps.validate.outputs.step_success == 'true' && github.event_name == 'pull_request' && github.event.action == 'closed'  # Only apply changes when the PR is merged and validate has been success
         run: terraform apply -input=false tfplan
