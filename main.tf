@@ -22,8 +22,3 @@ provider "aws" {
 resource "random_pet" "sg" {}
 
 resource "random_pet" "pb" {}
-
-resource "random_pet" "gt" {}
-
-#Testing the public repository and the protection branch policies
-resource "random_pet" "na" {}
