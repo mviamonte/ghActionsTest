@@ -21,6 +21,7 @@ env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "gha-test"
   CONFIG_DIRECTORY: "./"
+  AWS_REGION: "eu-central-1"
   
 jobs:
   #Testing the Terraform action
@@ -39,7 +40,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::076080011360:role/GithubActionsRole
-          aws-region: eu-south-2
+          aws-region: ${{ env.AWS_REGION }}
                   
       #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
