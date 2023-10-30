@@ -17,6 +17,8 @@ terraform {
 
 provider "aws" {
   region = "us-west-2"
+  assume_role {
+    role_arn = "arn:aws:iam::076080011360:role/GithubActionsRole"
 }
 
 resource "random_pet" "sg" {}
