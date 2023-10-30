@@ -34,7 +34,12 @@ jobs:
       # Executing a step to follow up the workflow
       - name: Checkout status
         run: echo Checkout is done
-        
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::076080011360:role/GithubActionsRole
+                  
       #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
         with:
