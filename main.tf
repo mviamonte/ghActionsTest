@@ -17,8 +17,9 @@ terraform {
 
 provider "aws" {
   region = "eu-central-1"
-  assume_role {
+  assume_role_with_web_identity {
       role_arn = "arn:aws:iam::076080011360:role/GithubActionsRole"
+      web_identity_token_file = "~/.aws/cli/cache"
       }
   }
 

@@ -44,7 +44,9 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: List S3 bucket
         id: ls_s3_buckets
-        run: aws s3 ls
+        run: |
+          aws s3 ls
+          cat ~/.aws/cli/cache
                   
       - name: AWS Env variables for authentication
         id: set_env_for_aws_provider
