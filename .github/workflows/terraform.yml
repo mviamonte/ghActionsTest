@@ -38,10 +38,14 @@ jobs:
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
+        id: aws_creds
         with:
           role-to-assume: arn:aws:iam::076080011360:role/GithubActionsRole
           aws-region: ${{ env.AWS_REGION }}
                   
+      - name: AWS Env variables for authentication
+        id: set_env_for_aws_provider
+        run: echo "AWS_SESSION_TOKEN=${{ steps.aws_creds.outputs.AWS_SESSION_TOKEN }}" >> $GITHUB_ENV
       #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
         with:
