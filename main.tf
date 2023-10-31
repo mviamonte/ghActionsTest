@@ -17,12 +17,10 @@ terraform {
 
 provider "aws" {
   region = "eu-central-1"
-  sts {
-    assume_role_with_web_identity {
+  assume_role_with_web_identity {
       role_arn = "arn:aws:iam::076080011360:role/GithubActionsRole"
       }
-    }
-}
+  }
 
 resource "random_pet" "sg" {}
 
