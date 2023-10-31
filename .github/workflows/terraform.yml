@@ -50,8 +50,8 @@ jobs:
       - name: AWS Env variables for authentication
         id: set_env_for_aws_provider
         run: | 
-        echo "AWS_SESSION_TOKEN=${{ steps.aws_creds.outputs.AWS_SESSION_TOKEN }}" >> $GITHUB_ENV
-        echo $AWS_SESSION_TOKEN
+          echo "AWS_SESSION_TOKEN=${{ steps.aws_creds.outputs.AWS_SESSION_TOKEN }}" >> $GITHUB_ENV
+          echo $AWS_SESSION_TOKEN
 
       #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
