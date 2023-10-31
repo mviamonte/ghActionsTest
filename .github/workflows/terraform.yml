@@ -42,6 +42,9 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::076080011360:role/GithubActionsRole
           aws-region: ${{ env.AWS_REGION }}
+      - name: List S3 bucket
+        id: ls_s3_buckets
+        run: aws s3 ls
                   
       - name: AWS Env variables for authentication
         id: set_env_for_aws_provider
@@ -68,13 +71,15 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: terraform plan -input=false -out=tfplan
-        continue-on-error: true
+        continue-on-error: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Review Terraform Plan
         id: save_plan
         if: success() && github.event_name == 'pull_request'
         run: terraform show -json tfplan > tfplan.json
-        continue-on-error: true
+        continue-on-error: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
