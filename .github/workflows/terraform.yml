@@ -41,7 +41,7 @@ jobs:
         id: aws_creds
         with:
           role-to-assume: arn:aws:iam::076080011360:role/GithubActionsRole
-          role-skip-session-tagging: true
+          output-credentials: true
           aws-region: ${{ env.AWS_REGION }}
       - name: List S3 bucket
         id: ls_s3_buckets
