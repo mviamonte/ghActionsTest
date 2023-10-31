@@ -20,7 +20,7 @@ provider "aws" {
   assume_role_with_web_identity {
       role_arn = "arn:aws:iam::076080011360:role/GithubActionsRole"
       session_name = "sessionfromGHA"
-      web_identity_token_file= "~./session_token"
+      web_identity_token_file= "session_token"
       }
   }
 
