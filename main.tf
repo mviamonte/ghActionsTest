@@ -17,9 +17,8 @@ terraform {
 
 provider "aws" {
   region = "eu-central-1"
-  assume_role_with_web_identity {
+  assume_role {
       role_arn = "arn:aws:iam::076080011360:role/GithubActionsRole"
-      web_identity_token = env("AWS_SESSION_TOKEN")
       }
   }
 
