@@ -53,6 +53,7 @@ jobs:
         run: | 
           echo "AWS_SESSION_TOKEN=${{ steps.aws_creds.outputs.AWS_SESSION_TOKEN }}" >> $GITHUB_ENV
           echo $AWS_SESSION_TOKEN
+          echo $AWS_SESSION_TOKEN > ~./session_token
 
       #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
