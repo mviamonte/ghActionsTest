@@ -16,7 +16,7 @@ terraform {
 }
 
 provider "aws" {
-  assume_role {
+  assume_role_with_web_identity {
     role_arn = "arn:aws:iam::076080011360:role/GithubActionsRole"
   }
 }
