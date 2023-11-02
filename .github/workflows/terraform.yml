@@ -50,8 +50,7 @@ jobs:
           echo "AWS_SESSION_TOKEN=${{ steps.aws_creds.outputs.AWS_SESSION_TOKEN }}" >> $GITHUB_ENV
           touch session_token
           echo $AWS_SECRET_ACCESS_KEY > session_token
-          ls ~/.aws/cli/cache
-          cat ~/.aws/cli/cache
+          aws sts get-caller-identity
 
       #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
