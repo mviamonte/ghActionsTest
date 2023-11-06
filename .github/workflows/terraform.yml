@@ -72,11 +72,11 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-       id: plan
-       run: terraform plan -out=tfplan
-       continue-on-error: false
-       env:
-         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: plan
+        run: terraform plan -out=tfplan
+        continue-on-error: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Review Terraform Plan
         id: save_plan
