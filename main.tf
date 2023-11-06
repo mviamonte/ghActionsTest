@@ -5,7 +5,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "4.52.0"
+      version = "4.22.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -16,8 +16,13 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-2"
-}
+  region = "eu-central-1"
+  #assume_role_with_web_identity {
+      #role_arn = "arn:aws:iam::076080011360:role/GithubActionsRole"
+      #session_name = "sessionfromGHA"
+      #web_identity_token_file= "session_token"
+      #}
+  }
 
 resource "random_pet" "sg" {}
 

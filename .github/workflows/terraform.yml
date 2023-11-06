@@ -21,12 +21,17 @@ env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "gha-test"
   CONFIG_DIRECTORY: "./"
+  AWS_REGION: "eu-central-1"
   
 jobs:
   #Testing the Terraform action
   terraform_steps:
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions: 
+      id-token: write
+      contents: read
+      issues: write
+      pull-requests: write
     steps:
       # Checking out the code repo
       - uses: actions/checkout@v3
@@ -34,42 +39,61 @@ jobs:
       # Executing a step to follow up the workflow
       - name: Checkout status
         run: echo Checkout is done
-        
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        #id: aws_creds
+        with:
+          role-to-assume: arn:aws:iam::076080011360:role/GithubActionsRole
+          #output-credentials: true
+          aws-region: ${{ env.AWS_REGION }}
+          
+      #- name: AWS Env variables for authentication
+      #  id: set_env_for_aws_provider
+      #  run: | 
+      #    echo "AWS_SESSION_TOKEN=${{ steps.aws_creds.outputs.AWS_SESSION_TOKEN }}" >> $GITHUB_ENV
+      #    touch session_token
+      #    echo $AWS_SECRET_ACCESS_KEY > session_token
+      #    aws sts get-caller-identity
+
       #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
+        id: setup
         with:
           terraform_version: 1.1.7
-      #Set the credentials
-      - uses: hashicorp/setup-terraform@v2
-        with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      #Set the credentials
+      # - uses: hashicorp/setup-terraform@v2
+      #   with:
+      #     cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       #Install wrapper script
-      - uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_wrapper: true
+      # - uses: hashicorp/setup-terraform@v2
+      #   with:
+      #     terraform_wrapper: true
           
      #Execute the terraform init command and generate some outputs
-      - uses: hashicorp/setup-terraform@v2
       - name: Terraform Init
         id: init
         run: terraform init
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -input=false -out=tfplan
-        continue-on-error: true
+        run: terraform plan -out=tfplan
+        continue-on-error: false
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Review Terraform Plan
         id: save_plan
         if: success() && github.event_name == 'pull_request'
         run: terraform show -json tfplan > tfplan.json
-        continue-on-error: true
+        continue-on-error: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check -recursive
+        run: terraform fmt -recursive
       
       - name: Terraform Validate
         id: validate
@@ -122,4 +146,3 @@ jobs:
         #if: steps.validate.outputs.step_success == 'true' && github.event_name == 'pull_request' && github.event.action == 'closed'  # Only apply changes when the PR is merged and validate has been success
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -input=false tfplan
-
