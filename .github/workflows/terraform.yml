@@ -30,6 +30,8 @@ jobs:
     permissions: 
       id-token: write
       contents: read
+      issues: write
+      pull-requests: write
     steps:
       # Checking out the code repo
       - uses: actions/checkout@v3
