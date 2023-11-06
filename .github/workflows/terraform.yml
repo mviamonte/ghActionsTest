@@ -71,7 +71,6 @@ jobs:
           
      #Execute the terraform init command and generate some outputs
       - name: Terraform Init
-      - uses: hashicorp/setup-terraform@v2
         id: init
         run: terraform init
 
