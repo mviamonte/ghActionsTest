@@ -27,7 +27,9 @@ jobs:
   #Testing the Terraform action
   terraform_steps:
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions: 
+      id-token: write
+      contents: read
     steps:
       # Checking out the code repo
       - uses: actions/checkout@v3
@@ -38,10 +40,10 @@ jobs:
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
-        id: aws_creds
+        #id: aws_creds
         with:
           role-to-assume: arn:aws:iam::076080011360:role/GithubActionsRole
-          output-credentials: true
+          #output-credentials: true
           aws-region: ${{ env.AWS_REGION }}
           
       #- name: AWS Env variables for authentication
@@ -54,20 +56,22 @@ jobs:
 
       #Define the terraform version
       - uses: hashicorp/setup-terraform@v2
+        id: setup
         with:
           terraform_version: 1.1.7
-      #Set the credentials
-      - uses: hashicorp/setup-terraform@v2
-        with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      #Set the credentials
+      # - uses: hashicorp/setup-terraform@v2
+      #   with:
+      #     cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       #Install wrapper script
       # - uses: hashicorp/setup-terraform@v2
       #   with:
       #     terraform_wrapper: true
           
      #Execute the terraform init command and generate some outputs
-      - uses: hashicorp/setup-terraform@v2
       - name: Terraform Init
+      - uses: hashicorp/setup-terraform@v2
         id: init
         run: terraform init
 
@@ -75,70 +79,70 @@ jobs:
         id: plan
         run: terraform plan -out=tfplan
         continue-on-error: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Review Terraform Plan
-        id: save_plan
-        if: success() && github.event_name == 'pull_request'
-        run: terraform show -json tfplan > tfplan.json
-        continue-on-error: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Review Terraform Plan
+      #   id: save_plan
+      #   if: success() && github.event_name == 'pull_request'
+      #   run: terraform show -json tfplan > tfplan.json
+      #   continue-on-error: false
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Terraform Format
-        id: fmt
-        run: terraform fmt -recursive
+      # - name: Terraform Format
+      #   id: fmt
+      #   run: terraform fmt -recursive
       
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
-        if: ${{ success() }}
-        env:
-            step_success: true
+      # - name: Terraform Validate
+      #   id: validate
+      #   run: terraform validate -no-color
+      #   if: ${{ success() }}
+      #   env:
+      #       step_success: true
       
 
-      #Comments the PR with the output of terraform plan
-      - uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-            <details><summary>Validation Output</summary>
+      # #Comments the PR with the output of terraform plan
+      # - uses: actions/github-script@v6
+      #   if: github.event_name == 'pull_request'
+      #   env:
+      #     PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+      #       #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+      #       #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+      #       <details><summary>Validation Output</summary>
 
-            \`\`\`\n
-            ${{ steps.validate.outputs.stdout }}
-            \`\`\`
+      #       \`\`\`\n
+      #       ${{ steps.validate.outputs.stdout }}
+      #       \`\`\`
 
-            </details>
+      #       </details>
 
-            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+      #       #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
-            <details><summary>Show Plan</summary>
+      #       <details><summary>Show Plan</summary>
 
-            \`\`\`\n
-            ${process.env.PLAN}
-            \`\`\`
+      #       \`\`\`\n
+      #       ${process.env.PLAN}
+      #       \`\`\`
 
-            </details>
+      #       </details>
 
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.CONFIG_DIRECTORY }}\`, Workflow: \`${{ github.workflow }}\`*`;
+      #       *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.CONFIG_DIRECTORY }}\`, Workflow: \`${{ github.workflow }}\`*`;
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-      - name: Apply Terraform Changes
-        id: apply_the_plan
-        #if: success() && github.event_name == 'pull_request' && github.event.action == 'closed'  # Only apply changes when the PR is merged
-        #if: steps.validate.outputs.step_success == 'true' && github.event_name == 'pull_request' && github.event.action == 'closed'  # Only apply changes when the PR is merged and validate has been success
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -input=false tfplan
+      #       github.rest.issues.createComment({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body: output
+      #       })
+      # - name: Apply Terraform Changes
+      #   id: apply_the_plan
+      #   #if: success() && github.event_name == 'pull_request' && github.event.action == 'closed'  # Only apply changes when the PR is merged
+      #   #if: steps.validate.outputs.step_success == 'true' && github.event_name == 'pull_request' && github.event.action == 'closed'  # Only apply changes when the PR is merged and validate has been success
+      #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      #   run: terraform apply -input=false tfplan
 
